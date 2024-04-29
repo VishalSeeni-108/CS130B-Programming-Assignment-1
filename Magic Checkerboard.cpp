@@ -7,6 +7,7 @@ main()
 {
     //Read in input
     vector<vector <int>> checkerboard; 
+    vector<vector <int>> parity; 
 
     int rows, columns; 
     cin >> rows; 
@@ -15,13 +16,153 @@ main()
     for(int i = 0; i < rows; i++)
     {
         vector<int> tempRow; 
+        vector<int> parityRow; 
         for(int j = 0; j < columns; j++)
         {
             int tempValue; 
             cin >> tempValue; 
             tempRow.push_back(tempValue); 
+            if(tempValue == 0)
+            {
+                parityRow.push_back(2); 
+            }
+            else
+            {
+                parityRow.push_back(tempValue % 2); 
+            }
         }
         checkerboard.push_back(tempRow); 
+        parity.push_back(parityRow); 
+    }
+
+    cout << endl; 
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            cout << checkerboard.at(i).at(j) << " "; 
+        }
+        cout << endl; 
+    }
+
+    cout << endl; 
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            cout << parity.at(i).at(j) << " "; 
+        }
+        cout << endl; 
+    }
+
+    //Assign parity array
+    //First, we check if the input is invalid by figuring out if there are parities spread row and column wise
+    bool invalid = false; 
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            bool sameRow = false;
+            bool sameCol = false;  
+            if(parity.at(i).at(j) !=  2)
+            {
+                //Check if there are cells with the same parity in the same row
+                
+                for(int k = 0; k < columns; k++)
+                {
+                    if((k != j) && parity.at(i).at(k) == parity.at(i).at(j))
+                    {
+                        sameRow = true; 
+                        break; 
+                    }
+                }
+
+                //Check if there are cells with the same parity in the same column
+
+                for(int l = 0; l < rows; l++)
+                {
+                    if((l != i) && parity.at(l).at(j) == parity.at(i).at(j))
+                    {
+                        sameCol = true; 
+                        break; 
+                    }
+                }
+
+                //if there are cells with the same parity in the same row, check if there are any elements with the same parity in "adjacent" rows
+                if(sameRow)
+                {
+                    for(int k = i+1; k < rows; k+=2)
+                    {
+                        for(int m = 0; m < columns; m++)
+                        {
+                            if((m != i) && parity.at(k).at(m) == parity.at(i).at(j))
+                            {
+                                invalid = true; 
+                                break; 
+                            }
+                        }
+                    }
+                    for(int k = i-1; k >= 0; k-=2)
+                    {
+                        for(int m = 0; m < columns; m++)
+                        {
+                            if((m != i) && parity.at(k).at(m) == parity.at(i).at(j))
+                            {
+                                cout << "This was triggered" << endl; 
+                                cout << "k: " << k << endl; 
+                                cout << "m: " << m << endl; 
+                                cout << "i: " << i << endl; 
+                                cout << "j: " << j << endl; 
+                                invalid = true; 
+                                break; 
+                            }
+                        }
+                    }
+
+                    //if not invalid, assign parity by row 
+                    int parityToAssign = parity.at(i).at(j); 
+                    if(!invalid)
+                    {
+                        cout << "assigning parity" << endl; 
+                        for(int k = i; k < rows; k+=2)
+                        {
+                            for(int l = 0; l < columns; l++)
+                            {
+                                parity.at(k).at(l) = parityToAssign; 
+                            }
+                        }
+                        for(int k = i; k >= 0; k-=2)
+                        {
+                            for(int l = 0; l < columns; l++)
+                            {
+                                parity.at(k).at(l) = parityToAssign; 
+                            }
+                        }
+                        break; 
+                    }
+                }
+                else if(sameCol)
+                {
+                    
+                }
+            }
+
+            if(sameRow)
+            {
+                break; 
+            }
+        }
+    }
+
+   cout << endl; 
+   cout << "After edit" << endl; 
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            cout << parity.at(i).at(j) << " "; 
+        }
+        cout << endl; 
     }
 
     //Idea: take the smallest possible value at each choice
@@ -211,13 +352,13 @@ main()
     }
 
 
-    // cout << endl; 
-    // for(int i = 0; i < rows; i++)
-    // {
-    //     for(int j = 0; j < columns; j++)
-    //     {
-    //         cout << checkerboard.at(i).at(j) << " "; 
-    //     }
-    //     cout << endl; 
-    // }
+    cout << endl; 
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            cout << checkerboard.at(i).at(j) << " "; 
+        }
+        cout << endl; 
+    }
 }
