@@ -5,6 +5,7 @@ using namespace std;
 
 main()
 {
+    //Read in input
     vector<vector <int>> checkerboard; 
 
     int rows, columns; 
@@ -23,106 +24,194 @@ main()
         checkerboard.push_back(tempRow); 
     }
 
-    //Find first non empty cell
-    int nonZeroRow = 0; 
-    int nonZeroColumn = 0;
-    bool nonZeroFound = false;     
+    //Idea: take the smallest possible value at each choice
+    //Check all 4 corners for parity - if they all agree, pick the smallest value that is increasing both row and column wise and has opposite parity
+    bool invalidInput = false; 
+
     for(int i = 0; i < rows; i++)
     {
         for(int j = 0; j < columns; j++)
         {
-            if(checkerboard.at(i).at(j) != 0)
+            //Check parity dictated by corners - if there is an invalid setup, return -1
+            bool parityAgrees = true;
+            int  cornerParity = 2; //0 for even, 1 for odd  
+            //Check upper left
+            if(i != 0 && j != 0)
             {
-                nonZeroRow = i; 
-                nonZeroColumn = j; 
-                nonZeroFound = true; 
+                if(checkerboard.at(i-1).at(j-1) != 0)
+                {
+                    if(cornerParity == 2)
+                    {
+                        cornerParity = checkerboard.at(i-1).at(j-1) % 2; 
+                    }
+                    else
+                    {
+                        if(cornerParity != checkerboard.at(i-1).at(j-1) % 2)
+                        {
+                            parityAgrees = false; 
+                        }
+                    }
+                }
             }
-            if(nonZeroFound)
+            //Check upper right
+            if(i != 0 && j != (columns - 1))
             {
-                break;
+                if(checkerboard.at(i-1).at(j+1) != 0)
+                {
+                    if(cornerParity == 2)
+                    {
+                        cornerParity = checkerboard.at(i-1).at(j+1) % 2; 
+                    }
+                    else
+                    {
+                        if(cornerParity != checkerboard.at(i-1).at(j+1) % 2)
+                        {
+                            parityAgrees = false; 
+                        }
+                    }
+                }
             }
+            //Check lower left
+            if(i != (rows - 1) && j != 0)
+            {
+                if(checkerboard.at(i+1).at(j-1) != 0)
+                {
+                    if(cornerParity == 2)
+                    {
+                        cornerParity = checkerboard.at(i+1).at(j-1) % 2; 
+                    }
+                    else
+                    {
+                        if(cornerParity != checkerboard.at(i+1).at(j-1) % 2)
+                        {
+                            parityAgrees = false; 
+                        }
+                    }
+                }
+              
+            }
+            //Check lower right
+            if(i != (rows - 1) && j != (columns - 1))
+            {
+                if(checkerboard.at(i+1).at(j+1) != 0)
+                {
+                    if(cornerParity == 2)
+                    {
+                        cornerParity = checkerboard.at(i+1).at(j+1) % 2; 
+                    }
+                    else
+                    {
+                        if(cornerParity != checkerboard.at(i+1).at(j+1) % 2)
+                        {
+                            parityAgrees = false; 
+                        }
+                    }
+                }
+            }
+
+            if(!parityAgrees)
+            {
+                cout << -1 << endl; 
+                //cout << "Invalid case 1" << endl; 
+                //cout << "Row: " << i << " Column: " << j << endl; 
+                invalidInput = true; 
+                break; 
+            }
+            else
+            {
+                if(checkerboard.at(i).at(j) != 0)
+                {
+                    if(checkerboard.at(i).at(j) % 2 == cornerParity)
+                    {
+                        cout << -1 << endl; 
+                        //cout << "Invalid case 2" << endl; 
+                        //cout << "Row: " << i << " Column: " << j << endl; 
+                        invalidInput = true; 
+                        break; 
+                    }
+                }
+                else
+                {
+                    int nextSmallestValue;
+                    if(i == 0 && j == 0)
+                    {
+                        nextSmallestValue = 1; 
+                    }
+                    else if(i == 0)
+                    {
+                        nextSmallestValue = checkerboard.at(i).at(j-1) + 1; 
+                    }
+                    else if(j == 0)
+                    {
+                        nextSmallestValue = checkerboard.at(i-1).at(j) + 1; 
+                    }
+                    else
+                    {
+                        nextSmallestValue = checkerboard.at(i-1).at(j) + 1; 
+                        if(nextSmallestValue < (checkerboard.at(i).at(j-1) + 1))
+                        {
+                            nextSmallestValue = checkerboard.at(i).at(j-1) + 1; 
+                        }
+                    }
+
+                    if(nextSmallestValue % 2 == cornerParity)
+                    {
+                        nextSmallestValue++; 
+                    }
+
+                    //Check increasing property
+                    bool increasingValid = true; 
+                    if(i != (rows - 1))
+                    {
+                        if(nextSmallestValue >= checkerboard.at(i+1).at(j) && checkerboard.at(i+1).at(j) != 0)
+                        {
+                            increasingValid = false; 
+                        }
+                    }
+                    if(j != (columns - 1))
+                    {
+                        if(nextSmallestValue >= checkerboard.at(i).at(j+1) && checkerboard.at(i).at(j+1) != 0)
+                        {
+                            increasingValid = false; 
+                        }
+                    }
+                    if(!increasingValid)
+                    {
+                        cout << -1 << endl; 
+                        //cout << "Invalid case 3" << endl; 
+                        //cout << "Row: " << i << " Column: " << j << endl; 
+                        invalidInput = true; 
+                        break; 
+                    }
+                    else
+                    {
+                        checkerboard.at(i).at(j) = nextSmallestValue; 
+                    }
+                }
+            }
+
         }
-        if(nonZeroFound)
+        if(invalidInput)
         {
             break; 
         }
     }
 
-    //All (even, even) and (odd, odd) squares will be one parity and all (even, odd) and (odd, even) squares will be the other
-    //Call this class 1 and class 2 respectively
-    //First, classify the first nonzero value. It's parity will be used for all the values in its class. 
-
-    //Since we're using modulo, a value of 0 will indicate even and a value of 1 will indicate odd
-    int firstValClass; 
-
-    int firstValRowParity = nonZeroRow % 2; 
-    int firstValColParity = nonZeroColumn % 2; 
-    int firstValParity = checkerboard.at(nonZeroRow).at(nonZeroColumn) % 2; 
-
-    if((nonZeroRow == 0 && nonZeroColumn == 0) || (nonZeroRow == 1 && nonZeroColumn == 1))
+    if(!invalidInput)
     {
-        firstValClass = 0; //Class 1
-    }
-    else
-    {
-        firstValClass = 1; //Class 2
-    }
-
-    //Now, for each square: 
-    //1. Classify the cell. 
-    //2. Check if a value is already present. If there is a value already assigned, check if it is the expected parity. If it isn't, stop the program and return -1. Otherwise, continue. 
-    //3. Check the previous values in the row and index (with exceptions for values on the edges). Since we need the values to be increasing from left to right and top to bottom, we will 
-    //take the greedy approach by choosing the smallest value that will satisfy the increasing constraint both ways. 
-
-    for(int i = 0; i < rows; i++)
-    {
-        for(int j = 0; j < columns; j++)
+        int sum = 0; 
+        for(int i = 0; i < rows; i++)
         {
-            //Classify Cell 
-            int currCellClass; 
-
-            int currCellRowParity = i % 2; 
-            int currCellColParity = j % 2; 
-
-            if((currCellRowParity == 0 && currCellColParity == 0) || (currCellRowParity == 1 && currCellColParity == 1))
+            for(int j = 0; j < columns; j++)
             {
-                currCellClass = 0; //Class 1
-            }
-            else
-            {
-                currCellClass = 1; //Class 2
-            }
-
-            //Check if there is an existing value
-            if(checkerboard.at(i).at(j) != 0)
-            {
-                int existingValueParity = checkerboard.at(i).at(j) % 2; 
-                if(currCellClass == firstValClass)
-                {
-                    if(existingValueParity != firstValParity)
-                    {
-                        cout << -1 << endl; 
-                        cout << "Invalid case 1 reached" << endl; //Delete this later
-                    }
-                }
-                else if(currCellClass != firstValClass)
-                {
-                    if(existingValueParity == firstValParity)
-                    {
-                        cout << -1 << endl; 
-                        cout << "Invalid case 2 reached" << endl; //Delete this later
-                    }
-                }
+                sum += checkerboard.at(i).at(j); 
             }
         }
+        cout << sum << endl; 
     }
-
-
-
 
 
     // cout << endl; 
-
     // for(int i = 0; i < rows; i++)
     // {
     //     for(int j = 0; j < columns; j++)
