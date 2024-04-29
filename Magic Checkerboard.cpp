@@ -59,38 +59,100 @@ main()
     vector<vector<int>> colOdd(checkerboard); 
 
     //1. Alternating rows, starting with even
+    bool invalidFlag1 = false; 
     for(int i = 0; i < rows; i++)
     {
         for(int j = 0; j < columns; j++)
+        {   
+            //If there is no existing value
+            if(rowEven.at(i).at(j) == 0)
+            {
+                int smallestCandidate1 = 1; 
+                int smallestCandidate2 = 1; 
+                int nextValue; 
+
+                if(i > 0)
+                {
+                    if(rowEven.at(i-1).at(j) != 0)
+                    {
+                        smallestCandidate1 = rowEven.at(i-1).at(j) + 1; 
+                    }
+                }
+
+                if(j > 0)
+                {
+                    if(rowEven.at(i).at(j-1) != 0)
+                    {
+                        smallestCandidate2 = rowEven.at(i).at(j-1) + 1; 
+                    }
+                }
+
+                if(smallestCandidate1 > smallestCandidate2)
+                {
+                    nextValue = smallestCandidate1 + 1; 
+                }
+                else
+                {
+                    nextValue = smallestCandidate2 + 1; 
+                }
+
+                //ensure nextValue is correct parity - if it is in a even row it should be even 
+                if((i % 2) == 0) //should be even
+                {
+                    if((nextValue % 2) != 0)
+                    {
+                        nextValue++;
+                    }
+                }
+                else //should be odd
+                {
+                    if((nextValue % 2) == 0)
+                    {
+                        nextValue++;
+                    }
+                }
+
+                //ensure nextValue maintains increasing property both to the right and down
+                if(i < (rows - 1))
+                {
+
+                }
+
+                rowEven.at(i).at(j) = nextValue; 
+            }
+            else //There is already a value
+            {
+                //Check parity
+                if((i % 2) == 0) //should be even
+                {
+                    if((rowEven.at(i).at(j) % 2) != 0)
+                    {
+                        cout << -1 << endl; 
+                        invalidFlag1 = true; 
+                        break; 
+                    }
+                }
+                else //should be odd
+                {
+                    if((rowEven.at(i).at(j) % 2) == 0)
+                    {
+                        cout << -1 << endl; 
+                        invalidFlag1 = true; 
+                        break; 
+                    }
+                }
+            }
+
+            if(invalidFlag1)
+            {
+                break; 
+            }
+            
+        }
+
+        if(invalidFlag1)
         {
-            int smallestCandidate1 = 1; 
-            int smallestCandidate2 = 1; 
-            int nextValue; 
-
-            if(i > 0)
-            {
-                if(rowEven.at(i-1).at(j) != 0)
-                {
-                    smallestCandidate1 = rowEven.at(i-1).at(j) + 1; 
-                }
-            }
-
-            if(j > 0)
-            {
-                if(rowEven.at(i).at(j-1) != 0)
-                {
-                    smallestCandidate2 = rowEven.at(i).at(j-1) + 1; 
-                }
-            }
-
-            if(smallestCandidate1 > smallestCandidate2)
-            {
-                nextValue = smallestCandidate1; 
-            }
-            else
-            {
-                nextValue = smallestCandidate2; 
-            }
+            break; 
         }
     }
 
@@ -472,6 +534,17 @@ main()
         for(int j = 0; j < columns; j++)
         {
             cout << checkerboard.at(i).at(j) << " "; 
+        }
+        cout << endl; 
+    }
+
+    cout << endl;
+    cout << "rowEven: " << endl;  
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            cout << rowEven.at(i).at(j) << " "; 
         }
         cout << endl; 
     }
