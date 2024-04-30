@@ -115,7 +115,19 @@ main()
                 //ensure nextValue maintains increasing property both to the right and down
                 if(i < (rows - 1))
                 {
+                    if(nextValue >= rowEven.at(i+1).at(j))
+                    {
+                        cout << -1 << endl; 
+                        invalidFlag1 = true; 
+                    }
+                }
 
+                if(j < (columns - 1))
+                {
+                    if(nextValue >= rowEven.at(i).at(j+1))
+                    {
+                        
+                    }
                 }
 
                 rowEven.at(i).at(j) = nextValue; 
