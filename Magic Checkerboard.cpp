@@ -7,7 +7,6 @@ main()
 {
     //Read in input
     vector<vector <int>> checkerboard; 
-    //vector<vector <int>> parity; 
 
     int rows, columns; 
     cin >> rows; 
@@ -16,34 +15,24 @@ main()
     for(int i = 0; i < rows; i++)
     {
         vector<int> tempRow; 
-        //vector<int> parityRow; 
         for(int j = 0; j < columns; j++)
         {
             int tempValue; 
             cin >> tempValue; 
             tempRow.push_back(tempValue); 
-            // if(tempValue == 0)
-            // {
-            //     parityRow.push_back(2); 
-            // }
-            // else
-            // {
-            //     parityRow.push_back(tempValue % 2); 
-            // }
         }
         checkerboard.push_back(tempRow); 
-        //parity.push_back(parityRow); 
     }
 
-    cout << endl; 
-    for(int i = 0; i < rows; i++)
-    {
-        for(int j = 0; j < columns; j++)
-        {
-            cout << checkerboard.at(i).at(j) << " "; 
-        }
-        cout << endl; 
-    }
+    // cout << endl; 
+    // for(int i = 0; i < rows; i++)
+    // {
+    //     for(int j = 0; j < columns; j++)
+    //     {
+    //         cout << checkerboard.at(i).at(j) << " "; 
+    //     }
+    //     cout << endl; 
+    // }
 
     //New approach: we know that parity will be the either along alternating rows or along alternating columns. We will assume 4 cases: 
     //1. Alternating rows, starting with even
@@ -89,11 +78,11 @@ main()
 
                 if(smallestCandidate1 > smallestCandidate2)
                 {
-                    nextValue = smallestCandidate1 + 1; 
+                    nextValue = smallestCandidate1; 
                 }
                 else
                 {
-                    nextValue = smallestCandidate2 + 1; 
+                    nextValue = smallestCandidate2; 
                 }
 
                 //ensure nextValue is correct parity - if it is in a even row it should be even 
@@ -115,7 +104,24 @@ main()
                 //ensure nextValue maintains increasing property both to the right and down
                 if(i < (rows - 1))
                 {
+                    if((nextValue > rowEven.at(i + 1).at(j)) && (rowEven.at(i+1).at(j) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along column" << endl; 
+                        invalidFlag1 = true; 
+                        break;
+                    }
+                }
 
+                if(j < (columns - 1))
+                {
+                    if((nextValue > rowEven.at(i).at(j+1)) && (rowEven.at(i).at(j+1) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along row" << endl; 
+                        invalidFlag1 = true; 
+                        break; 
+                    }
                 }
 
                 rowEven.at(i).at(j) = nextValue; 
@@ -127,7 +133,8 @@ main()
                 {
                     if((rowEven.at(i).at(j) % 2) != 0)
                     {
-                        cout << -1 << endl; 
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be even" << endl; 
                         invalidFlag1 = true; 
                         break; 
                     }
@@ -136,7 +143,8 @@ main()
                 {
                     if((rowEven.at(i).at(j) % 2) == 0)
                     {
-                        cout << -1 << endl; 
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be odd" << endl; 
                         invalidFlag1 = true; 
                         break; 
                     }
@@ -156,15 +164,524 @@ main()
         }
     }
 
+    //2. Alternating rows, starting with odd
+    bool invalidFlag2 = false; 
+    for(int i = 0; i < rows; i++)
+    { 
+        for(int j = 0; j < columns; j++)
+        {   
+            //If there is no existing value
+            if(rowOdd.at(i).at(j) == 0)
+            {
+                int smallestCandidate1 = 1; 
+                int smallestCandidate2 = 1; 
+                int nextValue; 
 
+                if(i > 0)
+                {
+                    if(rowOdd.at(i-1).at(j) != 0)
+                    {
+                        smallestCandidate1 = rowOdd.at(i-1).at(j) + 1; 
+                    }
+                }
 
+                if(j > 0)
+                {
+                    if(rowOdd.at(i).at(j-1) != 0)
+                    {
+                        smallestCandidate2 = rowOdd.at(i).at(j-1) + 1; 
+                    }
+                }
 
+                if(smallestCandidate1 > smallestCandidate2)
+                {
+                    nextValue = smallestCandidate1; 
+                }
+                else
+                {
+                    nextValue = smallestCandidate2; 
+                }
 
+                //ensure nextValue is correct parity - if it is in a even row it should be odd 
+                if((i % 2) == 0) //should be odd
+                {
+                    if((nextValue % 2) == 0)
+                    {
+                        nextValue++;
+                    }
+                }
+                else //should be even
+                {
+                    if((nextValue % 2) != 0)
+                    {
+                        nextValue++;
+                    }
+                }
 
+                //ensure nextValue maintains increasing property both to the right and down
+                if(i < (rows - 1))
+                {
+                    if((nextValue > rowOdd.at(i + 1).at(j)) && (rowOdd.at(i+1).at(j) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along column" << endl; 
+                        invalidFlag2 = true; 
+                        break;
+                    }
+                }
 
+                if(j < (columns - 1))
+                {
+                    if((nextValue > rowOdd.at(i).at(j+1)) && (rowOdd.at(i).at(j+1) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along row" << endl; 
+                        invalidFlag2 = true; 
+                        break; 
+                    }
+                }
 
+                rowOdd.at(i).at(j) = nextValue; 
+            }
+            else //There is already a value
+            {
+                //Check parity
+                if((i % 2) == 0) //should be odd
+                {
+                    if((rowOdd.at(i).at(j) % 2) == 0)
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be odd" << endl; 
+                        invalidFlag2 = true; 
+                        break; 
+                    }
+                }
+                else //should be even
+                {
+                    if((rowOdd.at(i).at(j) % 2) != 0)
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be even" << endl; 
+                        invalidFlag2 = true; 
+                        break; 
+                    }
+                }
+            }
+
+            if(invalidFlag2)
+            {
+                break; 
+            }
+            
+        }
+
+        if(invalidFlag2)
+        {
+            break; 
+        }
+    }
+
+    //3. Alternating columns, starting with even
+    bool invalidFlag3 = false; 
+    for(int i = 0; i < rows; i++)
+    { 
+        for(int j = 0; j < columns; j++)
+        {   
+            //If there is no existing value
+            if(colEven.at(i).at(j) == 0)
+            {
+                int smallestCandidate1 = 1; 
+                int smallestCandidate2 = 1; 
+                int nextValue; 
+
+                if(i > 0)
+                {
+                    if(colEven.at(i-1).at(j) != 0)
+                    {
+                        smallestCandidate1 = colEven.at(i-1).at(j) + 1; 
+                    }
+                }
+
+                if(j > 0)
+                {
+                    if(colEven.at(i).at(j-1) != 0)
+                    {
+                        smallestCandidate2 = colEven.at(i).at(j-1) + 1; 
+                    }
+                }
+
+                if(smallestCandidate1 > smallestCandidate2)
+                {
+                    nextValue = smallestCandidate1; 
+                }
+                else
+                {
+                    nextValue = smallestCandidate2; 
+                }
+
+                //ensure nextValue is correct parity - if it is in a even column it should be even 
+                if((j % 2) == 0) //should be even
+                {
+                    if((nextValue % 2) != 0)
+                    {
+                        nextValue++;
+                    }
+                }
+                else //should be odd
+                {
+                    if((nextValue % 2) == 0)
+                    {
+                        nextValue++;
+                    }
+                }
+
+                //ensure nextValue maintains increasing property both to the right and down
+                if(i < (rows - 1))
+                {
+                    if((nextValue > colEven.at(i + 1).at(j)) && (colEven.at(i+1).at(j) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along column" << endl; 
+                        invalidFlag3 = true; 
+                        break;
+                    }
+                }
+
+                if(j < (columns - 1))
+                {
+                    if((nextValue > colEven.at(i).at(j+1)) && (colEven.at(i).at(j+1) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along row" << endl; 
+                        invalidFlag3 = true; 
+                        break; 
+                    }
+                }
+
+                colEven.at(i).at(j) = nextValue; 
+            }
+            else //There is already a value
+            {
+                //Check parity
+                if((j % 2) == 0) //should be even
+                {
+                    if((colEven.at(i).at(j) % 2) != 0)
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be even" << endl; 
+                        invalidFlag3 = true; 
+                        break; 
+                    }
+                }
+                else //should be odd
+                {
+                    if((colEven.at(i).at(j) % 2) == 0)
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be odd" << endl; 
+                        invalidFlag3 = true; 
+                        break; 
+                    }
+                }
+            }
+
+            if(invalidFlag3)
+            {
+                break; 
+            }
+            
+        }
+
+        if(invalidFlag3)
+        {
+            break; 
+        }
+    }
+
+    //4. Alternating columns, starting with odd
+    bool invalidFlag4 = false; 
+    for(int i = 0; i < rows; i++)
+    { 
+        for(int j = 0; j < columns; j++)
+        {   
+            //If there is no existing value
+            if(colOdd.at(i).at(j) == 0)
+            {
+                int smallestCandidate1 = 1; 
+                int smallestCandidate2 = 1; 
+                int nextValue; 
+
+                if(i > 0)
+                {
+                    if(colOdd.at(i-1).at(j) != 0)
+                    {
+                        smallestCandidate1 = colOdd.at(i-1).at(j) + 1; 
+                    }
+                }
+
+                if(j > 0)
+                {
+                    if(colOdd.at(i).at(j-1) != 0)
+                    {
+                        smallestCandidate2 = colOdd.at(i).at(j-1) + 1; 
+                    }
+                }
+
+                if(smallestCandidate1 > smallestCandidate2)
+                {
+                    nextValue = smallestCandidate1; 
+                }
+                else
+                {
+                    nextValue = smallestCandidate2; 
+                }
+
+                //ensure nextValue is correct parity - if it is in a even column it should be odd 
+                if((j % 2) == 0) //should be odd
+                {
+                    if((nextValue % 2) == 0)
+                    {
+                        nextValue++;
+                    }
+                }
+                else //should be even
+                {
+                    if((nextValue % 2) != 0)
+                    { 
+                        nextValue++;
+                    }
+                }
+
+                //ensure nextValue maintains increasing property both to the right and down
+                if(i < (rows - 1))
+                {
+                    if((nextValue > colOdd.at(i + 1).at(j)) && (colOdd.at(i+1).at(j) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along column" << endl; 
+                        invalidFlag4 = true; 
+                        break;
+                    }
+                }
+
+                if(j < (columns - 1))
+                {
+                    if((nextValue > colOdd.at(i).at(j+1)) && (colOdd.at(i).at(j+1) != 0))
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Not increasing along row" << endl; 
+                        invalidFlag4 = true; 
+                        break; 
+                    }
+                }
+
+                colOdd.at(i).at(j) = nextValue; 
+            }
+            else //There is already a value
+            {
+                //Check parity
+                if((j % 2) == 0) //should be odd
+                {
+                    if((colOdd.at(i).at(j) % 2) == 0)
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be odd" << endl; 
+                        invalidFlag4 = true; 
+                        break; 
+                    }
+                }
+                else //should be even
+                {
+                    if((colOdd.at(i).at(j) % 2) != 0)
+                    {
+                        // cout << -1 << endl; 
+                        // cout << "Existing value should be even" << endl; 
+                        invalidFlag4 = true; 
+                        break; 
+                    }
+                }
+            }
+
+            if(invalidFlag4)
+            {
+                break; 
+            }
+            
+        }
+
+        if(invalidFlag4)
+        {
+            break; 
+        }
+    }
+
+    //Calculate sums
+    int rowEvenSum = 0; 
+    int rowOddSum = 0; 
+    int colEvenSum = 0; 
+    int colOddSum = 0; 
+
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            if(!invalidFlag1)
+            {
+                rowEvenSum += rowEven.at(i).at(j); 
+            }
+
+            if(!invalidFlag2)
+            {
+                rowOddSum += rowOdd.at(i).at(j); 
+            }
+
+            if(!invalidFlag3)
+            {
+                colEvenSum += colEven.at(i).at(j); 
+            }
+
+            if(!invalidFlag4)
+            {
+                colOddSum += colOdd.at(i).at(j); 
+            }
+        }
+    }
+
+    if(invalidFlag1)
+    {
+        rowEvenSum = INT_MAX; 
+    }
+    if(invalidFlag2)
+    {
+        rowOddSum = INT_MAX; 
+    }
+    if(invalidFlag3)
+    {
+        colEvenSum = INT_MAX; 
+    }
+    if(invalidFlag4)
+    {
+        colOddSum = INT_MAX; 
+    }
 
     // cout << endl; 
+    // cout << "Sum check:" << endl; 
+    // cout << rowEvenSum << endl; 
+    // cout << rowOddSum << endl; 
+    // cout << colEvenSum << endl; 
+    // cout << colOddSum << endl; 
+    // cout << endl; 
+
+    if((rowEvenSum < rowOddSum) && (rowEvenSum < colEvenSum) && (rowEvenSum < colOddSum) && (!invalidFlag1))
+    {
+        cout << rowEvenSum << endl; 
+    }
+    else if((rowOddSum < rowEvenSum) && (rowOddSum < colEvenSum) && (rowOddSum < colOddSum) && (!invalidFlag2))
+    {
+        cout << rowOddSum << endl; 
+    }
+    else if((colEvenSum < rowEvenSum) && (colEvenSum < rowOddSum) && (colEvenSum < colOddSum) && (!invalidFlag3))
+    {
+        cout << colEvenSum << endl; 
+    }
+    else if((colOddSum < rowEvenSum) && (colOddSum < rowOddSum) && (colOddSum < colEvenSum) && (!invalidFlag4))
+    {
+        cout << colOddSum << endl; 
+    }
+    else
+    {
+        cout << -1 << endl; 
+    }
+}
+
+
+
+
+
+
+
+
+//Print out all arrays
+
+//     cout << endl; 
+//     cout << "Original: " << endl;
+//     for(int i = 0; i < rows; i++)
+//     {
+//         for(int j = 0; j < columns; j++)
+//         {
+//             cout << checkerboard.at(i).at(j) << " "; 
+//         }
+//         cout << endl; 
+//     }
+
+//     cout << endl;
+//     cout << "rowEven: " << endl;  
+//     for(int i = 0; i < rows; i++)
+//     {
+//         for(int j = 0; j < columns; j++)
+//         {
+//             cout << rowEven.at(i).at(j) << " "; 
+//         }
+//         cout << endl; 
+//     }
+
+//     cout << endl;
+//     cout << "rowOdd: " << endl;  
+//     for(int i = 0; i < rows; i++)
+//     {
+//         for(int j = 0; j < columns; j++)
+//         {
+//             cout << rowOdd.at(i).at(j) << " "; 
+//         }
+//         cout << endl; 
+//     }
+
+//     cout << endl;
+//     cout << "colEven: " << endl;  
+//     for(int i = 0; i < rows; i++)
+//     {
+//         for(int j = 0; j < columns; j++)
+//         {
+//             cout << colEven.at(i).at(j) << " "; 
+//         }
+//         cout << endl; 
+//     }
+
+//     cout << endl;
+//     cout << "colOdd: " << endl;  
+//     for(int i = 0; i < rows; i++)
+//     {
+//         for(int j = 0; j < columns; j++)
+//         {
+//             cout << colOdd.at(i).at(j) << " "; 
+//         }
+//         cout << endl; 
+//     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   // cout << endl; 
     // for(int i = 0; i < rows; i++)
     // {
     //     for(int j = 0; j < columns; j++)
@@ -526,26 +1043,3 @@ main()
 //         }
 //         cout << sum << endl; 
 //     }
-
-
-    cout << endl; 
-    for(int i = 0; i < rows; i++)
-    {
-        for(int j = 0; j < columns; j++)
-        {
-            cout << checkerboard.at(i).at(j) << " "; 
-        }
-        cout << endl; 
-    }
-
-    cout << endl;
-    cout << "rowEven: " << endl;  
-    for(int i = 0; i < rows; i++)
-    {
-        for(int j = 0; j < columns; j++)
-        {
-            cout << rowEven.at(i).at(j) << " "; 
-        }
-        cout << endl; 
-    }
-}
