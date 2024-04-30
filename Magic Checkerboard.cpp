@@ -722,19 +722,19 @@ main()
 
         cout << sum << endl; 
     }
-    else if((rowEvenSum < rowOddSum) && (rowEvenSum < colEvenSum) && (rowEvenSum < colOddSum) && (!invalidFlag1))
+    else if((rowEvenSum <= rowOddSum) && (rowEvenSum <= colEvenSum) && (rowEvenSum <= colOddSum) && (!invalidFlag1))
     {
         cout << rowEvenSum << endl; 
     }
-    else if((rowOddSum < rowEvenSum) && (rowOddSum < colEvenSum) && (rowOddSum < colOddSum) && (!invalidFlag2))
+    else if((rowOddSum <= rowEvenSum) && (rowOddSum <= colEvenSum) && (rowOddSum <= colOddSum) && (!invalidFlag2))
     {
         cout << rowOddSum << endl; 
     }
-    else if((colEvenSum < rowEvenSum) && (colEvenSum < rowOddSum) && (colEvenSum < colOddSum) && (!invalidFlag3))
+    else if((colEvenSum <= rowEvenSum) && (colEvenSum <= rowOddSum) && (colEvenSum <= colOddSum) && (!invalidFlag3))
     {
         cout << colEvenSum << endl; 
     }
-    else if((colOddSum < rowEvenSum) && (colOddSum < rowOddSum) && (colOddSum < colEvenSum) && (!invalidFlag4))
+    else if((colOddSum <= rowEvenSum) && (colOddSum <= rowOddSum) && (colOddSum <= colEvenSum) && (!invalidFlag4))
     {
         cout << colOddSum << endl; 
     }
