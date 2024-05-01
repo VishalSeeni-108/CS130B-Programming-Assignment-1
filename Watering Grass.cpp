@@ -68,7 +68,7 @@ main()
         for(int i = 0; i < numSprinklers; i++)
         {
             //Check if circle is at least as large as the width of the grass
-            if(sprinklers.at(i).radius >= width)
+            if(sprinklers.at(i).radius > (width/2))
             {
                 //Calculate x, the distance from the center of the circle to the left/right sides of the rectangle
                 long double x = sqrt(pow(sprinklers.at(i).radius, 2) - pow((width / 2), 2)); 
@@ -117,7 +117,7 @@ main()
             {
                 if(sortedRectangles.at(i).start < currentCovered)
                 {
-                    if(sortedRectangles.at(i).end > nextIntervalEnd)
+                    if(sortedRectangles.at(i).end > nextIntervalEnd && sortedRectangles.at(i).end > currentCovered)
                     {
                         nextIntervalEnd = sortedRectangles.at(i).end; 
                         validIntervalFound = true; 
